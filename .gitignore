@@ -16,8 +16,8 @@ __pycache__/
 # Database files
 *.sqlite3
 
-# Temporary CSV files for database
-*.csv
+# # Temporary CSV files for database
+# *.csv
 
 # Logs and debug files
 *.log
