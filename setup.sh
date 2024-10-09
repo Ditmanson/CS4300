@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Find the virtual environment
-venv=$(find ~ -wholename "*/Group3*/activate" 2>/dev/null)
+venv=$(find . -wholename "*/Group3*/activate" 2>/dev/null)
 # Check if the virtual environment was found
 if [ -z "$venv" ]; then
     python3 -m venv venv
@@ -9,14 +9,14 @@ if [ -z "$venv" ]; then
 fi
 
 # Find requirements.txt
-requirements=$(find ~ -wholename "*requirements.txt" | head -n 1)
+requirements=$(find . -wholename "*requirements.txt" | head -n 1)
 if [ -z "$requirements" ]; then
     echo "requirements.txt not found."
     exit 1
 fi
-# install jq for get_csv function
-apt install jq
-source "$venv"
+# # install jq for get_csv function
+# apt install jq
+# source "$venv"
 
 # Pip installs
 pip3 install --upgrade pip
@@ -25,7 +25,7 @@ echo "Using requirements file: ${requirements}"
 pip3 install -r "${requirements}"
 
 # Find manage.py
-manage=$(find ~ -wholename "*/manage*" 2> /dev/null)
+manage=$(find . -wholename "*/manage*" 2>/dev/null)
 if [ -z "$manage" ]; then
     echo "manage.py not found"
     exit 1
@@ -45,16 +45,15 @@ git remote -v
 
 function run {
     manage=$(find ~ -wholename "*Group3*/manage.py" 2>/dev/null)
-if [ -z "$manage" ]; then
-    echo "manage.py not found."
-    exit 1
-fi
-python3 $manage runserver 0.0.0.0:3000
+    if [ -z "$manage" ]; then
+        echo "manage.py not found."
+        exit 1
+    fi
+    python3 $manage runserver 0.0.0.0:3000
 }
 
-
 function push {
-    local commitMessage="$1"  # Use local variable for the commit message
+    local commitMessage="$1" # Use local variable for the commit message
 
     # Check if a commit message was provided
     if [[ -z "$commitMessage" ]]; then
@@ -74,7 +73,7 @@ function push {
 
     # Commit the changes
     git commit -m "$commitMessage"
-    
+
     # Fetch and rebase
     git fetch origin
     git rebase origin
@@ -93,7 +92,7 @@ function push {
 }
 
 function pushsh {
-    local commitMessage="$1"  # Use local variable for the commit message
+    local commitMessage="$1" # Use local variable for the commit message
 
     # Check if a commit message was provided
     if [[ -z "$commitMessage" ]]; then
@@ -113,12 +112,12 @@ function pushsh {
 
     # Commit the changes
     git commit -m "$commitMessage"
-    
+
     # Fetch and rebase
     git fetch origin
     git rebase origin
 
-     #set remotes
+    #set remotes
     git remote set-url origin git@github.com:Ditmanson/CS4300.git
     git remote set-url secondary git@github.com:UCCS-CS4300-5300/Group3-fall2024.git
     echo "Remotes set:"
@@ -131,55 +130,55 @@ function pushsh {
     echo "Proceed to GitHub to create pull requests."
 }
 
-function get_csv {
-    if [ "$#" -ne 3 ]; then
-        echo "Error: You must provide exactly three arguments."
-        echo "Usage: $0 <start_page> <end_page> <output_csv>"
-        return 1
-    fi
+# function get_csv {
+#     if [ "$#" -ne 3 ]; then
+#         echo "Error: You must provide exactly three arguments."
+#         echo "Usage: $0 <start_page> <end_page> <output_csv>"
+#         return 1
+#     fi
 
-    # Your TMDB API key
-    api="caa36da1b9fe8e132d1eca3c0d70a28c"
-    
-    # Get start and end pages from arguments
-    start_page=$1
-    end_page=$2
+#     # Your TMDB API key
+#     api="caa36da1b9fe8e132d1eca3c0d70a28c"
 
-    # Output CSV file
-    output_file=$3
+#     # Get start and end pages from arguments
+#     start_page=$1
+#     end_page=$2
 
-    # Create CSV file and add header
-    echo "id,original_language,original_title,overview,popularity,poster_path,release_date,title,video,vote_average,vote_count,adult,backdrop_path,genre_ids" > "$output_file"
-    
-    # Start timer
-    start_time=$(date +%s)
+#     # Output CSV file
+#     output_file=$3
 
-    # Loop through the specified range of pages
-    for PAGE in $(seq "$start_page" "$end_page"); do
-        # Fetch the response
-        RESPONSE=$(curl -s "https://api.themoviedb.org/3/movie/popular?api_key=${api}&language=en-US&page=${PAGE}")
+#     # Create CSV file and add header
+#     echo "id,original_language,original_title,overview,popularity,poster_path,release_date,title,video,vote_average,vote_count,adult,backdrop_path,genre_ids" >"$output_file"
 
-        # Get the total number of pages from the response
-        TOTAL_PAGES=$(echo "$RESPONSE" | jq '.total_pages')
+#     # Start timer
+#     start_time=$(date +%s)
 
-        # If the total pages are less than the current page, break the loop
-        if [ "$PAGE" -gt "$TOTAL_PAGES" ]; then
-            echo "Fetched all available pages. Total pages: $TOTAL_PAGES"
-            break
-        fi
+#     # Loop through the specified range of pages
+#     for PAGE in $(seq "$start_page" "$end_page"); do
+#         # Fetch the response
+#         RESPONSE=$(curl -s "https://api.themoviedb.org/3/movie/popular?api_key=${api}&language=en-US&page=${PAGE}")
 
-        # Convert results to CSV and append to file
-        echo "$RESPONSE" | jq -r '.results[] | [.id, .original_language, .original_title, .overview, .popularity, .poster_path, .release_date, .title, .video, .vote_average, .vote_count, .adult, .backdrop_path, (.genre_ids | join(","))] | @csv' >> "$output_file"
+#         # Get the total number of pages from the response
+#         TOTAL_PAGES=$(echo "$RESPONSE" | jq '.total_pages')
 
-        echo "Fetched page $PAGE of $TOTAL_PAGES"
-    done
+#         # If the total pages are less than the current page, break the loop
+#         if [ "$PAGE" -gt "$TOTAL_PAGES" ]; then
+#             echo "Fetched all available pages. Total pages: $TOTAL_PAGES"
+#             break
+#         fi
 
-    # End timer
-    end_time=$(date +%s)
+#         # Convert results to CSV and append to file
+#         echo "$RESPONSE" | jq -r '.results[] | [.id, .original_language, .original_title, .overview, .popularity, .poster_path, .release_date, .title, .video, .vote_average, .vote_count, .adult, .backdrop_path, (.genre_ids | join(","))] | @csv' >>"$output_file"
 
-    # Calculate elapsed time
-    elapsed_time=$((end_time - start_time))
+#         echo "Fetched page $PAGE of $TOTAL_PAGES"
+#     done
 
-    # Print elapsed time
-    echo "Time taken: $elapsed_time seconds"
-}
+#     # End timer
+#     end_time=$(date +%s)
+
+#     # Calculate elapsed time
+#     elapsed_time=$((end_time - start_time))
+
+#     # Print elapsed time
+#     echo "Time taken: $elapsed_time seconds"
+# }
