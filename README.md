@@ -7,7 +7,8 @@
 *  **Kory** Mayberry 
 *  **Bob** Kroleski
 *  **Garrett** Smith
-###Kandban Board###
+
+## Kandban Board
 https://github.com/users/gsmith177/projects/4/settings
 
 ### HOW TO RUN THE PROGRAM
