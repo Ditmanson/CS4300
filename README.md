@@ -8,7 +8,7 @@
 *  **Bob** Kroleski
 *  **Garrett** Smith
 
-## Kandban Board
+## Kanban Board
 https://github.com/users/gsmith177/projects/4/settings
 
 ### HOW TO RUN THE PROGRAM
