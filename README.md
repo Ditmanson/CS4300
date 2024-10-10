@@ -7,6 +7,8 @@
 *  **Kory** Mayberry 
 *  **Bob** Kroleski
 *  **Garrett** Smith
+###Kandban Board###
+https://github.com/users/gsmith177/projects/4/settings
 
 ### HOW TO RUN THE PROGRAM
 1. `source setup.sh`
